@@ -36,6 +36,20 @@ passport.use(
 // ));
 
 // these serialize or deserialize functions are used when Sessions are in use
-passport.serializeUser((user, done) => done(null, user))
+passport.serializeUser((user, done) => {
+  console.log(user, "serialize")
+  done(null, user)
+  // here we can grab user id or some unique key that will help us locate user identity from our records or db
+  // and then we wil use that information to create a cookie that will be sent to browser 
+  // e.g. done(null, user.id)
+})
 
-passport.deserializeUser((user, done) => done(null, user))
+passport.deserializeUser((cookieStr /*|| id*/, done) => {
+  console.log(cookieStr, "de-serialize")
+  done(null, cookieStr)
+  // if it returns a unique id which we might have stored in a db potentially
+  // we can use that id to look it up in our database to locate and grab that user info from db  
+  /**
+   * User.find({_id: id}).then((foundUser) => done(null, foundUser))
+   */
+})
