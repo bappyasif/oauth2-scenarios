@@ -7,7 +7,7 @@ import { Login } from './routes/Login';
 
 function App() {
   let [user, setUser] = useState()
-  useEffect(() => {
+  const getUser = () => {
     fetch("http://localhost:4000/auth/login/success", {
       method: "GET",
       credentials: "include",
@@ -17,10 +17,13 @@ function App() {
         "Access-Control-Allow-Credentials": true
       }
     })
-    .then(resp => resp.status === 200 && resp.json())
-    .catch(err=>console.log(err, "request error!!"))
-    .then(data => console.log(data))
-    .catch(err=>console.log(err, "response error!!"))
+      .then(resp => resp.status === 200 && resp.json())
+      .catch(err => console.log(err, "request error!!"))
+      .then(data => console.log(data))
+      .catch(err => console.log(err, "response error!!"))
+  }
+  useEffect(() => {
+    !user && getUser()
   }, [])
   return (
     <div className="App">
@@ -28,6 +31,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
+
       </Routes>
     </div>
   );

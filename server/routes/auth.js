@@ -8,16 +8,18 @@ router.get("/google/callback", passport.authenticate("google", {
     // successMessage: "successfull login",
     // successRedirect: `${process.env.CLIENT_URL}/login/success`,
     // successRedirect: `http://localhost:4000/login/success`,
-    successRedirect: `http://localhost:3000/login/success`,
+    successRedirect: `http://localhost:3000/`,
+    // successRedirect: `http://localhost:4000/auth/login/success`,
+    // successRedirect: `/auth/login/success`,
     // failureMessage: "Login failed",
-    failureRedirect: `/login/failed`,
+    failureRedirect: `http://localhost:4000/auth/login/failed`,
     // failureRedirect: `${process.env.CLIENT_URL}/login/failed`,
 }));
 
 router.get("/login/failed", (req, res) => res.status(401).json({msg: "login failed"}))
 
 router.get("/login/success", (req, res) => {
-    // console.log(req.user, "req.user!!")
+    console.log(req.user, "req.user!!", req?.session?.passport?.user, req.isAuthenticated())
     if(req.user) {
         res.status(200).json({
             msg: "login successfull!!", 
@@ -25,9 +27,10 @@ router.get("/login/success", (req, res) => {
             cookies: req.cookies,
             // jwt: req.jwt
         })
-    } else {
-        res.status(401).json({msg: "authentication failed!!"})
-    }
+    } 
+    // else {
+    //     res.status(401).json({msg: "authentication failed!!"})
+    // }
 })
 
 router.get("/logout", (req, res) => {
