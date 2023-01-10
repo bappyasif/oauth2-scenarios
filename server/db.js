@@ -1,7 +1,4 @@
 const mongoose = require("mongoose");
-// require("dotenv").config()
-
-// const dbUrlStr = "mongodb://127.0.0.1:27017/sessions"
 
 mongoose.connect(process.env.DB_STR, {
     useNewUrlParser: true,

@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const router = express();
 
@@ -15,14 +16,17 @@ const isAuth = (req, res, next) => {
 }
 
 router.get("/login/success", (req, res) => {
-    // console.log(req.user, "req.user!!", req?.session?.passport?.user, req.isAuthenticated())
-    // console.log(req.session, "req.user!!", req?.session?.passport?.user, req.isAuthenticated())
     console.log(req.session.id, "req.user!!", req?.session?.passport?.user.id, req.isAuthenticated())
     if (req.user) {
-        // we can intentioanlly change session data if we need to
+        // we can intentioanlly change session data if we need to and later on check on it when
         req.session.isAuth = true
 
-        console.log(req.session.id, 'sessionid') // this will match with browser stored session sub string value
+        // console.log(req.session.id, 'sessionid') // this will match with browser stored session sub string value
+
+        const token = jwt.sign(req.user, process.env.JWT_SECRET, {expiresIn: '2s'})
+
+        // saving this jwt signed cookie on browser so that we can later on use this for authentication
+        res.cookie("token", token, {httpOnly: true})
         
         res.status(200).json({
             msg: "login successfull!!",
@@ -41,6 +45,24 @@ router.get("/login/failed", (req, res) => {
         message: "failure",
     });
 });
+
+const cookieJwtTokenAuth = (req, res, next) => {
+    console.log(req.cookies, req.session.id)
+    const token = req.cookies?.token;
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = user;
+        next();
+    } catch (err) {
+        res.clearCookie("token");
+        return res.redirect("/login")
+    }
+}
+
+router.get("/secretPage", cookieJwtTokenAuth, (req, res) => {
+    console.log("secret page!!");
+    res.redirect(`${CLIENT_URL}/login/success`)
+})
 
 router.get("/logout", isAuth, (req, res) => {
     console.log(req.session.passport?.user?.id, req.session.id)

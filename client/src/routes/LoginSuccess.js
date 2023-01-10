@@ -2,7 +2,7 @@ import React from 'react'
 
 function LoginSuccess() {
   return (
-    <div>LoginSuccess</div>
+    <div>Login Successfull Validated With Jwt and Session Cookie</div>
   )
 }
 

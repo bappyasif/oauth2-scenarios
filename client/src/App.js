@@ -4,6 +4,7 @@ import './App.css';
 import { Navbar } from './components/Navbar';
 import Home from './routes/Home';
 import { Login } from './routes/Login';
+import LoginSuccess from './routes/LoginSuccess';
 
 function App() {
   let [user, setUser] = useState()
@@ -26,6 +27,24 @@ function App() {
     !user && getUser()
   }, [])
 
+  // useEffect(() => {
+  //   fetch("http://localhost:4000/auth/secretPage",
+  //     {
+  //         method: "GET",
+  //         credentials: 'include',
+  //         headers: {
+  //             "Authorization": `${localStorage.getItem("token")}`,
+  //             "Accept": 'application/json',
+  //             'Content-Type': 'application/json',
+  //             "Access-Control-Allow-Credentials": true
+  //         }
+  //     }
+  // ).then(() => console.log("request done"))
+  //   .catch(err=>console.log('request error', err))
+  //   .then(()=>console.log("response done"))
+  //   .catch(err=>console.log('response error', err))
+  // }, [user])
+
   console.log(user, "user!!")
 
   return (
@@ -34,7 +53,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
-
+        <Route path='/login/success' element={<LoginSuccess />} />
       </Routes>
     </div>
   );
