@@ -3,14 +3,32 @@ const passport = require("passport");
 
 const router = express();
 
+const authCheck = (req, res, next) => {
+    if(req.user) {
+        next()
+    } else {
+        res.redirect("http://localhost:3000/login")
+    }
+}
+
+// router.get('/login', authCheck, (req, res) => {
+//     passport.authenticate("google", {session: false}, (err, user) => {
+//         res.cookie = ("coookiiiieee", user)
+//         res.status(200).json({msg: 'you are logged, look into cookie', user: req.user});
+//     })
+//     res.status(200).json({msg: 'not really!!', user: req.user});
+// });
+
 router.get('/login', (req, res) => {
-    res.render('login', { user: req.user });
+    res.status(200).json({msg: 'you are logged, look into cookie', user: req.user});
+    // res.render('login', { user: req.user });
 });
 
 // auth logout
 router.get('/logout', (req, res) => {
     // handle with passport
-    res.send('logging out');
+    req.logOut()
+    res.redirect("http://localhost:3000/")
 });
 
 // auth with google+
@@ -20,8 +38,9 @@ router.get('/google', passport.authenticate('google', {
 
 // callback route for google to redirect to
 router.get('/google/callback',  passport.authenticate('google'), (req, res) => {
-    // res.redirect("http://localhost:3000/")
-    res.status(200).json({msg: 'you reached the redirect URI', user: req.user});
+    res.cookie = ("session_cookie", req.user)
+    res.redirect("http://localhost:3000/")
+    // res.status(200).json({msg: 'you reached the redirect URI', user: req.user});
 });
 
 // callback route for google to redirect to

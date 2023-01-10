@@ -8,7 +8,7 @@ import { Login } from './routes/Login';
 function App() {
   let [user, setUser] = useState()
   const getUser = () => {
-    fetch("http://localhost:4000/auth/login/success", {
+    fetch("http://localhost:4000/auth/login/", {
       method: "GET",
       credentials: "include",
       headers: {
