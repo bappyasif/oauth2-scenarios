@@ -1,12 +1,20 @@
 require("dotenv").config();
 require("./passport");
+require("./db");
 const expressSession = require("express-session");
+const MongoSession = require("connect-mongodb-session")(expressSession);
 const express = require("express");
 const cors = require("cors");
 // const passportSetup = require("./passport");
 const passport = require("passport");
 const authRoute = require("./routes/auth");
 const app = express();
+
+// creating session store for users in db
+const store = new MongoSession({
+    uri: process.env.DB_STR,
+    collection: "userSessions"
+})
 
 // resaving cookie as im not currently using mongodb, otherwise i would have kept it as false
 // app.use(
@@ -17,9 +25,13 @@ app.use(expressSession({
     secret: process.env.SESSION_SECRET_KEYS,
     maxAge: 100 * 60 * 60 * 24,
     resave: true,
-    // these two options were causing session and authentication to be false
-    // saveUninitialized: false,
+    // these two options were causing session and authentication to be not false rather its was not showing up on broswer cookie when set to False
+    // we can anytime add options and values to session from any requests to edit and change its value 
+    saveUninitialized: false,
     // cookie: { secure: true }
+
+    // now we can store it in opur session as well
+    store: store
 }));
 
 app.use(passport.initialize());
@@ -37,35 +49,3 @@ app.use("/auth", authRoute);
 app.listen("4000", () => {
     console.log("Server is running!");
 });
-
-
-// const express = require("express");
-// // const cookieSession = require("cookie-session");
-// const expressSession = require("express-session");
-// const passport = require("passport");
-// const cors = require("cors");
-// const app = express();
-// const authRoute = require("./routes/auth");
-
-// app.use(expressSession({
-//     name: "session",
-//     secret: process.env.SESSION_SECRET_KEYS,
-//     maxAge: 100 * 60 * 60 * 24,
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { secure: true }
-// }));
-
-// app.use(express.urlencoded({extended: true}));
-// app.use(passport.initialize())
-// app.use(passport.session())
-
-// app.use(cors({
-//     origin: ["http://localhost:3001", "http://localhost:3000"],
-//     methods: "GET,PUT,POST,DELETE",
-//     credentials: true
-// }));
-
-// app.use("/auth", authRoute)
-
-// app.listen(4000, () => console.log("server is running on port 4000"))
