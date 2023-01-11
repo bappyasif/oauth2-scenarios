@@ -5,6 +5,7 @@ const expressSession = require("express-session");
 const MongoSession = require("connect-mongodb-session")(expressSession);
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 // const passportSetup = require("./passport");
 const passport = require("passport");
 const authRoute = require("./routes/auth");
@@ -33,15 +34,18 @@ app.use(expressSession({
     // now we can store it in opur session as well
     store: store
 }));
+// middleware to read cookies
+app.use(cookieParser());
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(cors({
-    origin: "http://localhost:3000",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-})
+app.use(
+    cors({
+        origin: ["http://localhost:3000"],
+        methods: "GET,POST,PUT,DELETE",
+        credentials: true,
+    })
 );
 
 app.use("/auth", authRoute);
