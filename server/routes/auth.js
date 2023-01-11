@@ -99,11 +99,11 @@ function cookieJwtTokenAuth (req, res, next) {
         next();
     } catch (err) {
         console.log("err in jwt auth", err)
-        // res.status(401).json({msg: "auth failed!!"})
+        res.status(401).json({msg: err})
         // res.clearCookie("token");
         // window.open(`${CLIENT_URL}/login`, "_self");
         // return res.redirect(CLIENT_URL);
-        return res.redirect(`${CLIENT_URL}/login`)
+        // return res.redirect(`${CLIENT_URL}/login`)
         // next()
     }
 }

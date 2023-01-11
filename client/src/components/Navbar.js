@@ -23,6 +23,9 @@ export const Navbar = ({ user }) => {
               />
             </li>
             <li className="listItem">{user.displayName}</li>
+            <li><Link className="link" to="/login/success">
+            | Secret Page | 
+          </Link></li>
             <li className="listItem" onClick={logout}>
               Logout
             </li>
