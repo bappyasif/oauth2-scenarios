@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 // const passportSetup = require("./passport");
 const passport = require("passport");
 const authRoute = require("./routes/auth");
+const authEpRoute = require("./routes/auth-ep");
 const app = express();
 
 // creating session store for users in db
@@ -36,6 +37,7 @@ app.use(expressSession({
 }));
 // middleware to read cookies
 app.use(cookieParser());
+app.use(express.json());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -49,6 +51,7 @@ app.use(
 );
 
 app.use("/auth", authRoute);
+app.use("/ep-auth", authEpRoute);
 
 app.listen("4000", () => {
     console.log("Server is running!");
