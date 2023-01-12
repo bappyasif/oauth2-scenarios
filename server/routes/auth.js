@@ -76,135 +76,18 @@ function cookieJwtTokenAuth(req, res, next) {
     if(!req.user) return res.status(401).json({ msg: "authentication failed" })
 
     next();
-
-    // try {
-    //     const user = verifyJwtAccessToken(token, refreshToken)
-
-    //     req.user = user;
-
-    //     next();
-    // } catch (err) {
-    //     console.log("err in jwt auth", err)
-    //     res.status(401).json({ msg: err })
-    // }
 }
-
-// function cookieJwtTokenAuth(req, res, next) {
-//     const token = req.cookies?.token;
-
-//     try {
-//         const user = verifyJwtAccessToken(token)
-
-//         req.user = user;
-
-//         next();
-//     } catch (err) {
-//         console.log("err in jwt auth", err)
-//         res.status(401).json({ msg: err })
-//     }
-// }
-
-// function cookieJwtTokenAuth(req, res, next) {
-//     const token = req.cookies?.token;
-//     // console.log(Boolean(token), "token", req.cookies)
-//     console.log(Boolean(token), "token", req.session.refreshToken)
-
-//     if (!token) return res.status(401).json({ msg: "token is not valid!!" })
-
-//     const user = verifyJwtAccessToken(token, req.session.refreshToken)
-
-//     // if (!user) {
-//     //     console.log("token is not valid!!")
-//     //     console.log("get new access token");
-//     //     const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
-//     //     user = verifyJwtAccessToken(newToken)
-//     //     // return res.status(401).json({ msg: "token is not valid!!" })
-//     // }
-
-//     req.user = user;
-
-//     next();
-
-//     // try {
-//     //     // const user = jwt.verify((token), process.env.JWT_SECRET);
-//     //     const user = verifyJwtAccessToken(token)
-
-//     //     req.user = user;
-//     //     next();
-
-//     // } catch (err) {
-//     //     console.log("err in jwt auth", err)
-//     //     try {
-//     //         console.log("get new access token");
-//     //         const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
-//     //         const user = verifyJwtAccessToken(newToken)
-
-//     //         req.user = user;
-//     //         console.log(newToken, user);
-//     //         next();
-//     //     } catch (error) {
-//     //         return res.status(401).json({ msg: error })
-//     //     }
-//     //     res.status(401).json({ msg: err })
-//     // }
-// }
-
-// function cookieJwtTokenAuth(req, res, next) {
-//     const token = req.cookies?.token;
-//     // console.log(Boolean(token), "token", req.cookies)
-//     console.log(Boolean(token), "token", req.session.refreshToken)
-
-//     if (!token) return res.status(401).json({ msg: "token is not valid!!" })
-
-//     // const user = verifyJwtAccessToken(token)
-
-//     // if (!user) {
-//     //     console.log("token is not valid!!")
-//     //     return res.status(401).json({ msg: "token is not valid!!" })
-//     // }
-
-//     // req.user = user;
-//     // next();
-
-//     try {
-//         // const user = jwt.verify((token), process.env.JWT_SECRET);
-//         const user = verifyJwtAccessToken(token)
-
-//         req.user = user;
-//         next();
-
-//     } catch (err) {
-//         console.log("err in jwt auth", err)
-//         try {
-//             console.log("get new access token");
-//             const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
-//             const user = verifyJwtAccessToken(newToken)
-
-//             req.user = user;
-//             console.log(newToken, user);
-//             next();
-//         } catch (error) {
-//             return res.status(401).json({ msg: error })
-//         }
-//         res.status(401).json({ msg: err })
-//         // res.clearCookie("token");
-//         // window.open(`${CLIENT_URL}/login`, "_self");
-//         // return res.redirect(CLIENT_URL);
-//         // return res.redirect(`${CLIENT_URL}/login`)
-//         // next()
-//     }
-// }
 
 router.get("/secretPage", cookieJwtTokenAuth, (req, res) => {
     console.log("secret page!!");
     res.status(200).json({ msg: "auth successfull!!" })
 })
 
-// router.get("/newToken", (req, res) => {
-//     const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
-//     res.cookie("token", newToken, { httpOnly: true })
-//     return res.status(200).json({ msg: "new token is authorized!!" })
-// })
+router.get("/newToken", (req, res) => {
+    const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
+    res.cookie("token", newToken, { httpOnly: true })
+    return res.status(200).json({ msg: "new token is authorized!!" })
+})
 
 router.get("/logout", isAuth, (req, res) => {
     console.log(req.session.passport?.user?.id, req.session.id)

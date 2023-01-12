@@ -1,11 +1,25 @@
 const jwt = require("jsonwebtoken");
 
+// const generateJwtAccessToken = (user) => {
+//     return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: "30s"})
+// }
+
+// const generateJwtRefreshToken = (user) => {
+//     return jwt.sign(user, process.env.REFRESH_TOKEN)
+// }
+
 const generateJwtAccessToken = (user) => {
-    return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: "30s"})
+    const payload = {
+        sub: user.id
+    }
+    return jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "30s"})
 }
 
 const generateJwtRefreshToken = (user) => {
-    return jwt.sign(user, process.env.REFRESH_TOKEN)
+    const payload = {
+        sub: user.id
+    }
+    return jwt.sign(payload, process.env.REFRESH_TOKEN)
 }
 
 const verifyRefreshTokenAndProvideAnAccessToken = (refreshTokenFromRequest) => {
@@ -40,21 +54,16 @@ const verifyJwtAccessToken = (accessTokenFromRequest, refreshTokenFromRequest) =
     if(!accessTokenFromRequest) return false
     
     let tokenVerifed = null;
-    console.log(tokenVerifed, 'tokenVerifed!!')
+    // console.log(tokenVerifed, 'tokenVerifed!!')
 
     try {
         tokenVerifed = jwt.verify(accessTokenFromRequest, process.env.JWT_SECRET)
     } catch(err) {
         tokenVerifed = verifyRefreshTokenAndProvideAnAccessToken(refreshTokenFromRequest)
-        console.log("running refresh!!")
+        // console.log("running refresh!!")
     }
 
     if(!tokenVerifed) return false
-
-    // if(!tokenVerifed && refreshTokenFromRequest) {
-    //     tokenVerifed = verifyRefreshTokenAndProvideAnAccessToken(refreshTokenFromRequest)
-    //     console.log("running refresh!!")
-    // }
 
     return tokenVerifed
 }
