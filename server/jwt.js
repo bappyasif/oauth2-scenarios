@@ -16,20 +16,48 @@ const verifyRefreshTokenAndProvideAnAccessToken = (refreshTokenFromRequest) => {
     })
 }
 
-const verifyJwtAccessToken = (accessTokenFromRequest) => {
-    return jwt.verify(accessTokenFromRequest, process.env.JWT_SECRET)
-}
+// const verifyJwtAccessToken = (accessTokenFromRequest) => {
+//     return jwt.verify(accessTokenFromRequest, process.env.JWT_SECRET)
+// }
 
 // const verifyJwtAccessToken = (accessTokenFromRequest, refreshTokenFromRequest) => {
+//     if(!accessTokenFromRequest) return false
+    
 //     const tokenVerifed = jwt.verify(accessTokenFromRequest, process.env.JWT_SECRET)
 //     console.log(tokenVerifed, 'tokenVerifed!!')
 
+//     if(!tokenVerifed) return false
+
 //     if(!tokenVerifed && refreshTokenFromRequest) {
 //         tokenVerifed = verifyRefreshTokenAndProvideAnAccessToken(refreshTokenFromRequest)
+//         console.log("running refresh!!")
 //     }
 
 //     return tokenVerifed
 // }
+
+const verifyJwtAccessToken = (accessTokenFromRequest, refreshTokenFromRequest) => {
+    if(!accessTokenFromRequest) return false
+    
+    let tokenVerifed = null;
+    console.log(tokenVerifed, 'tokenVerifed!!')
+
+    try {
+        tokenVerifed = jwt.verify(accessTokenFromRequest, process.env.JWT_SECRET)
+    } catch(err) {
+        tokenVerifed = verifyRefreshTokenAndProvideAnAccessToken(refreshTokenFromRequest)
+        console.log("running refresh!!")
+    }
+
+    if(!tokenVerifed) return false
+
+    // if(!tokenVerifed && refreshTokenFromRequest) {
+    //     tokenVerifed = verifyRefreshTokenAndProvideAnAccessToken(refreshTokenFromRequest)
+    //     console.log("running refresh!!")
+    // }
+
+    return tokenVerifed
+}
 
 module.exports = {
     generateJwtAccessToken,

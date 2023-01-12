@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 function LoginSuccess() {
-  let [getNewToken, setGetNewToken] = useState(false);
+  // let [getNewToken, setGetNewToken] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,21 +49,28 @@ function LoginSuccess() {
       }
     }).then((resp) => {
     console.log("request done")
-    if(resp.status != 200) return navigate("/login")
+    if(resp.status != 200) {
+      // setGetNewToken(true)
+      // console.log("runing 1")
+      return navigate("/login")
+    }
     return resp.json();
   })
     .catch(err=>console.log('request error', err))
     .then((data)=>{
-      if(data === undefined) {
-        setGetNewToken(true)
-      }
+      // if(data === undefined) {
+      //   console.log("runing 2")
+      //   setGetNewToken(true)
+      // }
       console.log("response done", data)
     })
     .catch(err=>console.log('response error', err))
   }, [])
+  
+
 
   // console.log(user, "user!!")
-  console.log(getNewToken, "getNewTojkenb")
+  getNewToken && console.log(getNewToken, "getNewTojkenb")
 
   return (
     <div>Login Successfull Validated With Jwt and Session Cookie</div>

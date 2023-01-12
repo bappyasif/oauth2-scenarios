@@ -37,6 +37,10 @@ router.get("/login/success", (req, res) => {
 
         // saving refresh token in session as well
         const refreshToken = generateJwtRefreshToken(req.user);
+
+        // keeping it in cookie
+        res.cookie("refreshToken", refreshToken, { httpOnly: true });
+        // keeping it in session
         req.session.refreshToken = refreshToken;
 
         res.status(200).json({
@@ -60,18 +64,45 @@ router.get("/login/failed", (req, res) => {
 
 function cookieJwtTokenAuth(req, res, next) {
     const token = req.cookies?.token;
-    
-    try {
-        const user = verifyJwtAccessToken(token)
+    const refreshToken = req.cookies?.refreshToken;
 
+    console.log(Boolean(token), Boolean(refreshToken))
+    const user = verifyJwtAccessToken(token, refreshToken)
+
+    if(user) {
         req.user = user;
-
-        next();
-    } catch (err) {
-        console.log("err in jwt auth", err)
-        res.status(401).json({ msg: err })
     }
+
+    if(!req.user) return res.status(401).json({ msg: "authentication failed" })
+
+    next();
+
+    // try {
+    //     const user = verifyJwtAccessToken(token, refreshToken)
+
+    //     req.user = user;
+
+    //     next();
+    // } catch (err) {
+    //     console.log("err in jwt auth", err)
+    //     res.status(401).json({ msg: err })
+    // }
 }
+
+// function cookieJwtTokenAuth(req, res, next) {
+//     const token = req.cookies?.token;
+
+//     try {
+//         const user = verifyJwtAccessToken(token)
+
+//         req.user = user;
+
+//         next();
+//     } catch (err) {
+//         console.log("err in jwt auth", err)
+//         res.status(401).json({ msg: err })
+//     }
+// }
 
 // function cookieJwtTokenAuth(req, res, next) {
 //     const token = req.cookies?.token;
@@ -169,16 +200,18 @@ router.get("/secretPage", cookieJwtTokenAuth, (req, res) => {
     res.status(200).json({ msg: "auth successfull!!" })
 })
 
-router.get("/newToken", (req, res) => {
-    const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
-    res.cookie("token", newToken, { httpOnly: true })
-    return res.status(200).json({ msg: "new token is authorized!!" })
-})
+// router.get("/newToken", (req, res) => {
+//     const newToken = verifyRefreshTokenAndProvideAnAccessToken(req.session.refreshToken)
+//     res.cookie("token", newToken, { httpOnly: true })
+//     return res.status(200).json({ msg: "new token is authorized!!" })
+// })
 
 router.get("/logout", isAuth, (req, res) => {
     console.log(req.session.passport?.user?.id, req.session.id)
 
     res.clearCookie("token");
+
+    res.clearCookie("refreshToken");
 
     req.session.destroy(err => {
         if (err) return res.status(401).json({ msg: "logout failed!!" })
