@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import AuthenticationForm from '../components/AuthenticationForm';
 
-export const Login = ({setUser}) => {
+export const Login = ({ setUser, user }) => {
+    const [showRegistration, setShowRegistration] = useState(false);
+    
+    const toggle = () => setShowRegistration(prev => !prev);
+
     const google = () => {
         window.open("http://localhost:4000/auth/google", "_self");
     };
@@ -32,56 +38,65 @@ export const Login = ({setUser}) => {
                     <div className="line" />
                     <div className="or">OR</div>
                 </div>
-                <div className="right">
-                    <UserLogin setUser={setUser} />
-                    {/* <input type="text" placeholder="Username" />
-                    <input type="text" placeholder="Password" />
-                    <button className="submit" onClick={handleLogin}>Login</button> */}
-                </div>
+                {
+                    user?.user
+                        ? null
+                        :
+                        <div className="right">
+                        {
+                            showRegistration
+                            ? <UserRegistration setUser={setUser} />
+                            : <UserLogin setUser={setUser} />
+                        }
+                    </div>
+                }
+                <DecideWhichAuthenticationMethodToShow toggle={toggle} showRegistration={showRegistration} />
             </div>
         </div>
     );
 };
 
-const UserLogin = ({setUser}) => {
-    // const [user, setUser] = useState({})
-    const [formData, setFormData] = useState({})
+const DecideWhichAuthenticationMethodToShow = ({toggle ,showRegistration}) => {
+    const leftText = showRegistration ? "Already has an Account?" : "No Account yet?"
+    const buttonText = showRegistration ? "Login" : "Register"
+    return (
+        <div>
+            <p>{leftText}</p>
+            <button style={{fontSize: "large", padding: "11px 22px"}} onClick={toggle}>{buttonText} Here</button>
+        </div>
+    )
+}
 
-    const handleFormDataChange = (evt, el) => setFormData(prev => ({ ...prev, [el]: evt.target.value }))
+const UserRegistration = ({ setUser }) => {
+    const url = 'http:///localhost:4000/ep-auth/register';
 
-    const sendLoginRequest = () => {
-        const url = 'http:///localhost:4000/ep-auth/login';
-        fetch(url, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Accept": "Application/json",
-                "content-Type": "Application/json"
-            },
-            body: JSON.stringify(formData)
-        }).then(resp => resp.json())
-            .catch(err => console.log("response error!!", err))
-            .then(data => {
-                console.log(data)
-                setUser(data);
-            })
-            .catch(err => console.log("data error", err))
-    }
-
-    const handleLogin = (evt) => {
-        evt.preventDefault();
-        if (formData.email && formData.password) {
-            sendLoginRequest()
-        } else {
-            alert("enter your registered email and password")
-        }
-    }
+    const formControls = [
+        { label: "Name", type: "text", id: "name", placeholder: "enter your name here" },
+        { label: "Email", type: "email", id: "email", placeholder: "enter your email address" },
+        { label: "Password", type: "password", id: "password", placeholder: "enter your password here" },
+        { label: "Confirm Password", type: "password", id: "confirm", placeholder: "retype your password here" }
+    ];
 
     return (
-        <form method='post' onSubmit={handleLogin}>
-            <input type="emnail" placeholder="User email" required onChange={e=>handleFormDataChange(e, "email")} />
-            <input type="password" placeholder="Password" required onChange={e=>handleFormDataChange(e, "password")} />
-            <button className="submit" type='submit'>Login</button>
-        </form>
+        <div>
+            <h1>Registration Form</h1>
+            <AuthenticationForm url={url} formControls={formControls} setUser={setUser} actionText={"Register"} />
+        </div>
+    )
+}
+
+const UserLogin = ({ setUser }) => {
+    const url = 'http:///localhost:4000/ep-auth/login';
+
+    const formControls = [
+        { label: "Email", type: "email", id: "email", placeholder: "enter your registered email address here" },
+        { label: "Password", type: "password", id: "password", placeholder: "enter your password here" }
+    ];
+
+    return (
+        <div>
+            <h1>Login Form</h1>
+            <AuthenticationForm url={url} formControls={formControls} setUser={setUser} actionText={"Login"} />
+        </div>
     )
 }

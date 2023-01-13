@@ -24,7 +24,7 @@ export const fetchAuthenticatedUserData = (url, setData) => {
         .catch(err => console.log("response error", err))
         .then(data => {
             console.log(data, "Dataaaaa!!")
-            setData(data);
+            data?.user && setData(data);
         })
         .catch(err => console.log("data error", err))
 }

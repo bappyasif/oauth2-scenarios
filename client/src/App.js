@@ -42,7 +42,7 @@ function App() {
       <Navbar user={user?.user} />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/login' element={<Login setUser={setUser} />} />
+        <Route path='/login' element={<Login setUser={setUser} user={user} />} />
         <Route path='/login/success' element={<LoginSuccess />} />
         <Route path='/secretRoute' element={<SecretRoute setUser={setUser} />} />
       </Routes>

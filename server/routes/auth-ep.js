@@ -18,6 +18,7 @@ const assignTokens = (req, user) => {
     req.session.refreshToken = refreshToken
 
     req.session.user = user;
+    req.session.isAuth = true;
 
     console.log(accessToken, refreshToken)
 }
