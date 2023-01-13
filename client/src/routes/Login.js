@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import AuthenticationForm from '../components/AuthenticationForm';
 
 export const Login = ({ setUser, user }) => {

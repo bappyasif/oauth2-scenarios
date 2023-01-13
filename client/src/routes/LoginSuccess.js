@@ -8,13 +8,10 @@ function LoginSuccess() {
     fetch("http://localhost:4000/auth/secretPage",{
       method: "GET",
       credentials: "include",
-      // "Access-Control-Allow-Origin": "http://localhost:4000",
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "Access-Control-Allow-Credentials": true,
-        // "Access-Control-Allow-Headers": "Accept",
-        // "Access-Control-Allow-Origin": "http://localhost:4000"
       }
     }).then((resp) => {
     console.log("request done")

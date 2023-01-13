@@ -49,12 +49,6 @@ router.post("/login", [
                             }
                         })
                     const checkPassword = currentUser.password === req.body.password
-                    // console.log(currentUser.password, checkPassword, req.body.password, currentUser)
-                    // if(checkPassword) {
-                    //     return res.status(200).json({msg: "user is found and also authenticated!!"})
-                    // } else {
-                    //     return res.status(401).json({msg: "password mismatched!!"})    
-                    // }
                 } else {
                     return res.status(401).json({ msg: "user is not found!!" })
                 }
@@ -134,14 +128,5 @@ router.get("/userSecrets", checkUserIsAuthenticated, (req, res) => {
     verifyTokenAndExtractUserId(req.session.token)
     res.status(200).json({msg: "auth secrets!!", user: req.session.user, token: req.session.refreshToken, refreshToken: req.session.refreshToken })
 })
-
-// router.post("/login", (req, res) => {
-//     console.log(req.body)
-//     res.status(200).json({msg: "registration alive"})
-// })
-
-// router.get("/register", (req, res) => {
-//     res.status(200).json({msg: "registration alive"})
-// })
 
 module.exports = router;

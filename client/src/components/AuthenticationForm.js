@@ -9,7 +9,6 @@ function AuthenticationForm({url, formControls, setUser, actionText}) {
     const handleFormDataChange = (evt, el) => setFormData(prev => ({ ...prev, [el]: evt.target.value }))
 
     const sendLoginRequest = () => {
-        // const url = 'http:///localhost:4000/ep-auth/login';
         fetch(url, {
             method: "POST",
             credentials: "include",
