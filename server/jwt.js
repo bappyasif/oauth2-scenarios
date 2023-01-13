@@ -30,6 +30,14 @@ const verifyRefreshTokenAndProvideAnAccessToken = (refreshTokenFromRequest) => {
     })
 }
 
+const verifyTokenAndExtractUserId = (accessToken) => {
+    return jwt.verify(accessToken, process.env.JWT_SECRET, (err, user) => {
+        if(err) return undefined
+        console.log(user, 'user!!')
+        return user
+    })
+}
+
 // const verifyJwtAccessToken = (accessTokenFromRequest) => {
 //     return jwt.verify(accessTokenFromRequest, process.env.JWT_SECRET)
 // }
@@ -72,5 +80,6 @@ module.exports = {
     generateJwtAccessToken,
     generateJwtRefreshToken,
     verifyJwtAccessToken,
-    verifyRefreshTokenAndProvideAnAccessToken
+    verifyRefreshTokenAndProvideAnAccessToken,
+    verifyTokenAndExtractUserId
 } 

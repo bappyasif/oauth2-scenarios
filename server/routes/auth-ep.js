@@ -1,7 +1,7 @@
 const { body, validationResult, check } = require("express-validator");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const { generateJwtAccessToken, generateJwtRefreshToken } = require("../jwt");
+const { generateJwtAccessToken, generateJwtRefreshToken, verifyJwtAccessToken, verifyTokenAndExtractUserId } = require("../jwt");
 const router = require("express").Router();
 
 const hashedPassword = (password) => bcrypt.hash(password, 11).then(hashed => hashed).catch(err => console.log("hash error!!", err))
@@ -16,6 +16,8 @@ const assignTokens = (req, user) => {
 
     req.session.token = accessToken;
     req.session.refreshToken = refreshToken
+
+    req.session.user = user;
 
     console.log(accessToken, refreshToken)
 }
@@ -40,7 +42,7 @@ router.post("/login", [
                             if (matched) {
                                 assignTokens(req, currentUser);
 
-                                return res.status(200).json({ msg: "user is found and also authenticated!!" })
+                                return res.status(200).json({ msg: "user is found and also authenticated!!", user: currentUser, token: req.session.token, refreshToken: req.session.refreshToken })
                             } else {
                                 return res.status(401).json({ msg: "password mismatched!!" })
                             }
@@ -97,7 +99,7 @@ router.post("/register", [
                                 assignTokens(req, user);
 
                                 console.log("new user is saved in db")
-                                return res.status(200).json({ msg: "user is created and also authenticated!!", user: user })
+                                return res.status(200).json({ msg: "user is created and also authenticated!!", user: user, token: req.session.token, refreshToken: req.session.refreshToken })
                             })
                         })
                 }
@@ -107,15 +109,29 @@ router.post("/register", [
 
 const checkUserIsAuthenticated = (req, res, next) => {
     if(req.session.token && req.session.refreshToken) {
-        next();
+        const vaildAccessToken = verifyJwtAccessToken(req.session.token, req.session.refreshToken)
+        
+        if(vaildAccessToken) {
+            req.session.token = vaildAccessToken;
+            next();
+        } else {
+            return res.status(401).json({msg: "token is not valid!!"})
+        }
+        
     } else {
-        res.status(401).json({msg: "access unauthorized!!"})
+        return res.status(401).json({msg: "access unauthorized!!"})
     }
 }
 
 router.get("/secretRoute", checkUserIsAuthenticated, (req, res) => {
-    console.log(req.session.token, req.session.refreshToken);
-    res.status(200).json({msg: "auth successfull"})
+    console.log(req.session.token, Boolean(req.session.refreshToken));
+    res.status(200).json({msg: "auth valid!!", user: req.user, token: req.session.refreshToken, refreshToken: req.session.refreshToken })
+})
+
+router.get("/userSecrets", checkUserIsAuthenticated, (req, res) => {
+    console.log(Boolean(req.session.token), Boolean(req.session.refreshToken), req.session.user);
+    verifyTokenAndExtractUserId(req.session.token)
+    res.status(200).json({msg: "auth secrets!!", user: req.session.user, token: req.session.refreshToken, refreshToken: req.session.refreshToken })
 })
 
 // router.post("/login", (req, res) => {

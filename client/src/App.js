@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import Home from './routes/Home';
 import { Login } from './routes/Login';
 import LoginSuccess from './routes/LoginSuccess';
+import SecretRoute, { fetchAuthenticatedUserData } from './routes/SecretRoute';
 
 function App() {
   let [user, setUser] = useState()
@@ -23,8 +24,15 @@ function App() {
       .then(data => setUser(data))
       .catch(err => console.log(err, "response error!!"))
   }
+
+  const getNonOauth2UserAuthenticatedData = () => {
+    const url = "http:///localhost:4000/ep-auth/userSecrets"
+    fetchAuthenticatedUserData(url, setUser)
+  }
+
   useEffect(() => {
     !user && getUser()
+    !user && getNonOauth2UserAuthenticatedData();
   }, [])
 
   console.log(user, "user!!")
@@ -34,8 +42,9 @@ function App() {
       <Navbar user={user?.user} />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='/login' element={<Login setUser={setUser} />} />
         <Route path='/login/success' element={<LoginSuccess />} />
+        <Route path='/secretRoute' element={<SecretRoute setUser={setUser} />} />
       </Routes>
     </div>
   );

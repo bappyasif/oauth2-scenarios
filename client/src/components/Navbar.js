@@ -17,14 +17,17 @@ export const Navbar = ({ user }) => {
           <ul className="list">
             <li className="listItem">
               <img
-                src={user.photos[0].value}
+                src={user.photos ? user.photos[0].value : "https://source.unsplash.com/featured/300x202"}
                 alt=""
                 className="avatar"
               />
             </li>
-            <li className="listItem">{user.displayName}</li>
+            <li className="listItem">{user.displayName || user.name}</li>
             <li><Link className="link" to="/login/success">
-            | Secret Page | 
+            | Secret Page For Oauth2 | 
+          </Link></li>
+          <li><Link className="link" to="/secretRoute">
+            | Secret Page For Non Oauth2 Users | 
           </Link></li>
             <li className="listItem" onClick={logout}>
               Logout
